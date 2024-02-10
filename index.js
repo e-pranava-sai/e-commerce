@@ -6,6 +6,7 @@ require("dotenv").config({
 const express = require("express");
 
 const userRoutes = require("./src/users/routes");
+const productRoutes = require("./src/products/routes");
 
 const app = express();
 
@@ -16,6 +17,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/users", userRoutes);
+
+app.use("/api/v1/products", productRoutes);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`app listening on port ${process.env.SERVER_PORT}`);
