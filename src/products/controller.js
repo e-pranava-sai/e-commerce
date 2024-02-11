@@ -52,7 +52,7 @@ const createProduct = (req, res) => {
 
     pool.query(
       queries.createProduct,
-      [name, parseFloat(price), category, parseInt(owner_id)],
+      [name, parseFloat(price), category, req.userId],
       (error, results) => {
         if (error) {
           throw error;

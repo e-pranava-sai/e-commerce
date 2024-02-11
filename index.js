@@ -7,6 +7,8 @@ const express = require("express");
 
 const userRoutes = require("./src/users/routes");
 const productRoutes = require("./src/products/routes");
+const authRoutes = require("./src/auth/routes");
+const authController = require("./src/auth/controller");
 
 const app = express();
 
@@ -16,9 +18,13 @@ app.get("/", (req, res) => {
   res.send("Welcome to e-commerce API :)");
 });
 
-app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.use("/api/v1/products", productRoutes);
+
+app.use(authController.auth);
+
+app.use("/api/v1/users", userRoutes);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`app listening on port ${process.env.SERVER_PORT}`);
