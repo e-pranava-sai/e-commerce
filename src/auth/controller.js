@@ -12,7 +12,8 @@ const auth = (req, res, next) => {
   token = token.split(" ")[1];
   jwt.verify(token, "somesuperscretscret", (error, decoded) => {
     if (error) {
-      res.status(401).send("Unauthorized");
+      console.log("error: ", error);
+      res.status(401).send("Try again.");
       return;
     }
     if (decoded.exp < (new Date().getTime() + 1) / 1000) {
