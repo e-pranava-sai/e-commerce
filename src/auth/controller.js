@@ -27,6 +27,14 @@ const auth = (req, res, next) => {
   });
 };
 
+const authorize = (req, res, next) => {
+  if (!req.is_admin) {
+    res.status(403).send("Forbidden");
+    return;
+  }
+  next();
+};
+
 const login = (req, res) => {
   const { email, password } = req.body;
   pool.query(
@@ -94,4 +102,4 @@ const signup = (req, res) => {
   });
 };
 
-module.exports = { login, signup, auth };
+module.exports = { login, signup, auth, authorize };
