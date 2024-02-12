@@ -11,6 +11,7 @@ const authRoutes = require("./src/auth/routes");
 const cartRoutes = require("./src/cart/routes");
 const orderRoutes = require("./src/orders/routes");
 const cartItemRoutes = require("./src/cartItems/routes");
+const orderItemRoutes = require("./src/orderItems/routes");
 const authController = require("./src/auth/controller");
 
 const app = express();
@@ -34,6 +35,8 @@ app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/cart-item", cartItemRoutes);
 
 app.use("/api/v1/orders", orderRoutes);
+
+app.use("/api/v1/order-item", orderItemRoutes);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`app listening on port ${process.env.SERVER_PORT}`);

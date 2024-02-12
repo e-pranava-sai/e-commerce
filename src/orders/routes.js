@@ -7,20 +7,22 @@ const router = Router();
 
 router.get("/", authController.authorize, controller.getOrders);
 
-router.get(
-  "/user/:userId",
-  authController.authorize,
-  controller.getOrdersByUserId
-);
-
-router.post("/", authController.authorize, controller.createOrder);
-
-router.delete("/:orderId", authController.authorize, controller.deleteOrder);
-
 router.get("/user", controller.getUserOrders);
 
-router.post("/user", controller.createUserOrder);
+router.get("/:userId", authController.authorize, controller.getOrdersByUserId);
 
-router.delete("/user/:orderId", controller.deleteUserOrder);
+router.post("/user", controller.createOrder);
+
+router.post(
+  "/:userId",
+  authController.authorize,
+  controller.createUserOrderByUserId
+);
+
+router.delete(
+  "/:orderId",
+  authController.authorize,
+  controller.deleteOrderByOrderId
+);
 
 module.exports = router;

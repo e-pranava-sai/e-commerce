@@ -1,5 +1,6 @@
 const pool = require("../db");
 const queries = require("./queries");
+const userQueries = require("../users/queries");
 
 const getOrders = (req, res) => {
   pool.query(queries.getOrders, (error, results) => {
@@ -12,19 +13,31 @@ const getOrders = (req, res) => {
 
 const getOrdersByUserId = (req, res) => {
   const userId = req.params.userId;
-  pool.query(queries.getOrdersByUserId, [userId], (error, results) => {
+  pool.query(userQueries.getUserById, [userId], (error, results) => {
     if (error) {
       throw error;
     }
-    res.status(200).json(results.rows);
+
+    if (results.rows.length === 0) {
+      res.status(404).send(`No user found with id ${userId}`);
+      return;
+    }
+
+    pool.query(queries.getOrdersByUserId, [userId], (error, results) => {
+      if (error) {
+        throw error;
+      }
+      res.status(200).json(results.rows);
+    });
   });
 };
 
 const createOrder = (req, res) => {
-  const { userId, productId, quantity, cartId } = req.body;
+  const userId = req.userId;
+  const { address, phone, date } = req.body;
   pool.query(
     queries.createOrder,
-    [userId, productId, quantity, cartId],
+    [address, phone, userId],
     (error, results) => {
       if (error) {
         throw error;
@@ -34,14 +47,14 @@ const createOrder = (req, res) => {
   );
 };
 
-const deleteOrder = (req, res) => {
+const deleteOrderByOrderId = (req, res) => {
   const orderId = req.params.orderId;
   pool.query(queries.getOrderById, [orderId], (error, results) => {
     if (error) {
       throw error;
     }
     if (results.rows.length === 0) {
-      res.status(404).send(`Order not found.`);
+      res.status(404).send(`No order found with id ${orderId}`);
       return;
     }
     pool.query(queries.deleteOrder, [orderId], (error, results) => {
@@ -63,12 +76,12 @@ const getUserOrders = (req, res) => {
   });
 };
 
-const createUserOrder = (req, res) => {
-  const userId = req.userId;
-  const { productId, quantity } = req.body;
+const createUserOrderByUserId = (req, res) => {
+  const userId = req.params.userId;
+  const { address, phone } = req.body;
   pool.query(
     queries.createOrder,
-    [userId, productId, quantity],
+    [address, phone, userId],
     (error, results) => {
       if (error) {
         throw error;
@@ -78,23 +91,11 @@ const createUserOrder = (req, res) => {
   );
 };
 
-const deleteUserOrder = (req, res) => {
-  const userId = req.userId;
-  const orderId = req.params.orderId;
-  pool.query(queries.deleteOrder, [userId, orderId], (error, results) => {
-    if (error) {
-      throw error;
-    }
-    res.status(200).send(`Order has been deleted.`);
-  });
-};
-
 module.exports = {
   getUserOrders,
-  createUserOrder,
-  deleteUserOrder,
+  createUserOrderByUserId,
+  deleteOrderByOrderId,
   getOrders,
   createOrder,
-  deleteOrder,
   getOrdersByUserId,
 };
