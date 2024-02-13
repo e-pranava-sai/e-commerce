@@ -12,8 +12,10 @@ const getProducts = (req, res) => {
       await client.connect();
     }
 
+    console.log("request made to the database for products.");
+
     // cache the products for 1 hour
-    await client.setEx("products", 30, JSON.stringify(results.rows));
+    await client.SETEX("products", 30, JSON.stringify(results.rows));
 
     res.status(200).json(results.rows);
   });
