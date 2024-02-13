@@ -38,6 +38,12 @@ app.use("/api/v1/orders", orderRoutes);
 
 app.use("/api/v1/order-item", orderItemRoutes);
 
+app.use((err, req, res, next) => {
+  if (err) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`app listening on port ${process.env.SERVER_PORT}`);
 });

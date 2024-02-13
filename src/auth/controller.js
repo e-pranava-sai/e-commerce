@@ -4,28 +4,35 @@ const pool = require("../db");
 const userQueries = require("../users/queries");
 
 const auth = (req, res, next) => {
-  let token = req.headers.authorization;
-  if (!token) {
-    res.status(401).send("Unauthorized");
-    return;
+  try {
+    let token = req.headers.authorization;
+    if (!token) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+    token = token.split(" ")[1];
+    jwt.verify(token, "somesuperscretscret", (error, decoded) => {
+      if (error) {
+        console.log("error: ", error);
+        res.status(401).send("Try again.");
+        return;
+      }
+      if (decoded.exp < (new Date().getTime() + 1) / 1000) {
+        res.status(401).send("Token expired");
+        return;
+      }
+      req.userId = parseInt(decoded.userId);
+      req.email = decoded.email;
+      req.is_admin = decoded.is_admin;
+      console.log("decoded: ", decoded);
+      next();
+    });
+  } catch (e) {
+    console.log(e);
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
   }
-  token = token.split(" ")[1];
-  jwt.verify(token, "somesuperscretscret", (error, decoded) => {
-    if (error) {
-      console.log("error: ", error);
-      res.status(401).send("Try again.");
-      return;
-    }
-    if (decoded.exp < (new Date().getTime() + 1) / 1000) {
-      res.status(401).send("Token expired");
-      return;
-    }
-    req.userId = parseInt(decoded.userId);
-    req.email = decoded.email;
-    req.is_admin = decoded.is_admin;
-    console.log("decoded: ", decoded);
-    next();
-  });
 };
 
 const authorize = (req, res, next) => {

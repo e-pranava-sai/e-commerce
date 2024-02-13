@@ -1,11 +1,20 @@
+const { client } = require("../caching/redis");
 const pool = require("../db");
 const queries = require("./queries");
 
 const getProducts = (req, res) => {
-  pool.query(queries.getProducts, (error, results) => {
+  pool.query(queries.getProducts, async (error, results) => {
     if (error) {
       throw error;
     }
+
+    if (!client.isOpen) {
+      await client.connect();
+    }
+
+    // cache the products for 1 hour
+    await client.setEx("products", 30, JSON.stringify(results.rows));
+
     res.status(200).json(results.rows);
   });
 };

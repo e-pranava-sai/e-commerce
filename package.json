@@ -8,7 +8,7 @@
     "pg:start": "pg_ctl -D data start",
     "pg:createdb": "createdb -h 127.0.0.1 app",
     "pg:stop": "pg_ctl -D data stop",
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +21,10 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "redis": "^4.6.13"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
